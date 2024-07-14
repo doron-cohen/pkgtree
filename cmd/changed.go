@@ -6,11 +6,13 @@ import (
 	"github.com/doron-cohen/pkgtree/core"
 )
 
-type ChangedCmd struct{}
+type ChangedCmd struct {
+	SinceRef string `default:"HEAD^" help:"The ref to compare against."`
+}
 
 func (c *ChangedCmd) Run() error {
 	ctx := context.Background()
-	files, err := core.GetChangedPackages(ctx, core.DifferTypeGit)
+	files, err := core.GetChangedPackages(ctx, c.SinceRef)
 	if err != nil {
 		return err
 	}

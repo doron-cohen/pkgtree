@@ -7,14 +7,18 @@ import (
 	"golang.org/x/exp/slices"
 )
 
-func GetChangedPackages(ctx context.Context, differType DifferType) ([]string, error) {
-	files, err := GetChangedFiles(ctx, differType, ".")
+func GetChangedPackages(ctx context.Context, ref string) ([]string, error) {
+	files, err := GetChangedFiles(ctx, ref, ".")
 	if err != nil {
 		return nil, err
 	}
 
 	pkgs := make([]string, 0, len(files))
 	for _, file := range files {
+		if file == "" {
+			continue
+		}
+
 		pkg, err := packages.GetFilePackageName(ctx, file)
 		if err != nil {
 			return nil, err
