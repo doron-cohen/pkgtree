@@ -9,11 +9,12 @@ import (
 type ChangedCmd struct {
 	SinceRef     string `default:"HEAD^" help:"The ref to compare against."`
 	IncludeDirty bool   `default:"false" help:"Include dirty files in the output."`
+	GitDir       string `default:"." type:"existingdir" help:"The git repository to use."`
 }
 
 func (c *ChangedCmd) Run() error {
 	ctx := context.Background()
-	files, err := core.GetChangedPackages(ctx, c.SinceRef, c.IncludeDirty)
+	files, err := core.GetChangedPackages(ctx, c.SinceRef, c.IncludeDirty, c.GitDir)
 	if err != nil {
 		return err
 	}
