@@ -11,7 +11,7 @@ import (
 func GetFilePackageName(ctx context.Context, filePath string) (string, error) {
 	cfg := &packages.Config{
 		Context: ctx,
-		Mode:    packages.NeedName | packages.NeedFiles | packages.NeedModule,
+		Mode:    packages.NeedName | packages.NeedFiles,
 		Dir:     filepath.Dir(filePath),
 	}
 

@@ -7,8 +7,8 @@ import (
 	"golang.org/x/exp/slices"
 )
 
-func GetChangedPackages(ctx context.Context, ref string) ([]string, error) {
-	files, err := GetChangedFiles(ctx, ref, ".")
+func GetChangedPackages(ctx context.Context, ref string, includeDirty bool) ([]string, error) {
+	files, err := GetChangedFiles(ctx, ref, includeDirty, ".")
 	if err != nil {
 		return nil, err
 	}

@@ -11,10 +11,17 @@ import (
 func GetChangedFiles(
 	ctx context.Context,
 	ref string,
+	includeDirty bool,
 	repoRoot string,
 ) (files []string, err error) {
 	var out bytes.Buffer
-	cmd := exec.CommandContext(ctx, "git", "diff", "--name-only", ref, "HEAD")
+
+	args := []string{"diff", "--name-only", ref}
+	if !includeDirty {
+		args = append(args, "HEAD")
+	}
+
+	cmd := exec.CommandContext(ctx, "git", args...)
 	cmd.Stdout = &out
 	cmd.Dir = repoRoot
 
