@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"path/filepath"
 
 	"github.com/doron-cohen/pkgtree/core"
 )
@@ -14,7 +15,13 @@ type ChangedCmd struct {
 
 func (c *ChangedCmd) Run() error {
 	ctx := context.Background()
-	files, err := core.GetChangedPackages(ctx, c.SinceRef, c.IncludeDirty, c.GitDir)
+
+	gitDir, err := filepath.Abs(c.GitDir)
+	if err != nil {
+		return err
+	}
+
+	files, err := core.GetChangedPackages(ctx, c.SinceRef, c.IncludeDirty, gitDir)
 	if err != nil {
 		return err
 	}

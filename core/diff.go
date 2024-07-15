@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"os/exec"
+	"path/filepath"
 	"strings"
 )
 
@@ -36,5 +37,11 @@ func GetChangedFiles(
 	}
 
 	files = strings.Split(fileList, "\n")
-	return files, nil
+	result := make([]string, 0, len(files))
+	for _, file := range files {
+		file = filepath.Join(repoRoot, file)
+		result = append(result, strings.TrimSpace(file))
+	}
+
+	return result, nil
 }

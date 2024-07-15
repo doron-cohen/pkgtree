@@ -15,13 +15,14 @@ func GetFilePackageName(ctx context.Context, filePath string) (string, error) {
 		Dir:     filepath.Dir(filePath),
 	}
 
-	pkgs, err := packages.Load(cfg, ".")
+	pkgs, err := packages.Load(cfg, "file="+filePath)
 	if err != nil {
 		return "", fmt.Errorf("failed to load package: %w", err)
 	}
 
 	if len(pkgs) == 0 {
-		return "", fmt.Errorf("no packages found")
+		// TODO: debug log about skipping non go file
+		return "", nil
 	}
 
 	return getFilePackageName(filePath, pkgs), nil
