@@ -19,7 +19,7 @@ func GetChangedPackages(ctx context.Context, ref string, includeDirty bool, repo
 			continue
 		}
 
-		pkg, err := packages.GetFilePackageName(ctx, file)
+		pkg, err := packages.GetFilePackagePath(ctx, file)
 		if err != nil {
 			return nil, err
 		}
