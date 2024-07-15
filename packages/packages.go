@@ -24,17 +24,17 @@ func GetFilePackageName(ctx context.Context, filePath string) (string, error) {
 		return "", fmt.Errorf("no packages found")
 	}
 
-	return pkgs[0].PkgPath, nil
+	return getFilePackageName(filePath, pkgs), nil
 }
 
-func getFilePackageName(filePath string, pkgs []*packages.Package) (string, error) {
+func getFilePackageName(filePath string, pkgs []*packages.Package) string {
 	for _, pkg := range pkgs {
 		for _, file := range pkg.GoFiles {
 			if file == filePath {
-				return pkg.PkgPath, nil
+				return pkg.PkgPath
 			}
 		}
 	}
 
-	return "", fmt.Errorf("package not found")
+	return ""
 }

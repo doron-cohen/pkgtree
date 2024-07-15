@@ -24,7 +24,9 @@ func GetChangedPackages(ctx context.Context, ref string, includeDirty bool, repo
 			return nil, err
 		}
 
-		pkgs = append(pkgs, pkg)
+		if pkg != "" {
+			pkgs = append(pkgs, pkg)
+		}
 	}
 
 	return uniqueAndSort(pkgs), nil
