@@ -3,8 +3,10 @@ package pkgs
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"path/filepath"
 
+	"github.com/doron-cohen/pkgtree/logger"
 	"golang.org/x/tools/go/packages"
 )
 
@@ -21,7 +23,7 @@ func GetFilePackagePath(ctx context.Context, filePath string) (string, error) {
 	}
 
 	if len(pkgs) == 0 {
-		// TODO: debug log about skipping non go file
+		logger.FromContext(ctx).Info("no packages found for file", slog.String("path", filePath))
 		return "", nil
 	}
 
