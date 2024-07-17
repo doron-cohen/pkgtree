@@ -13,21 +13,9 @@ func GetChangedPackages(ctx context.Context, ref string, includeDirty bool, repo
 		return nil, err
 	}
 
-	pkgNames := make([]string, 0, len(files))
-	for _, file := range files {
-		if file == "" {
-			continue
-		}
-
-		// TODO: pass multiple files instead of one by one
-		pkgName, err := pkgs.GetFilePackagePath(ctx, file)
-		if err != nil {
-			return nil, err
-		}
-
-		if pkgName != "" {
-			pkgNames = append(pkgNames, pkgName)
-		}
+	pkgNames, err := pkgs.GetFilesPackagePaths(ctx, repoRoot, files...)
+	if err != nil {
+		return nil, err
 	}
 
 	return unique(pkgNames), nil

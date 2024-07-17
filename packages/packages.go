@@ -3,37 +3,42 @@ package pkgs
 import (
 	"context"
 	"fmt"
-	"log/slog"
-	"path/filepath"
+	"slices"
 
 	"github.com/doron-cohen/pkgtree/logger"
 	"golang.org/x/tools/go/packages"
 )
 
-func GetFilePackagePath(ctx context.Context, filePath string) (string, error) {
+func GetFilesPackagePaths(ctx context.Context, moduleDir string, filePaths ...string) ([]string, error) {
 	cfg := &packages.Config{
 		Context: ctx,
 		Mode:    packages.NeedName | packages.NeedFiles,
-		Dir:     filepath.Dir(filePath),
+		Dir:     moduleDir,
 	}
 
-	pkgs, err := packages.Load(cfg, "file="+filePath)
+	patterns := make([]string, len(filePaths))
+	for i, filePath := range filePaths {
+		patterns[i] = fmt.Sprintf("file=%s", filePath)
+	}
+
+	pkgs, err := packages.Load(cfg, patterns...)
 	if err != nil {
-		return "", fmt.Errorf("failed to load package: %w", err)
+		return nil, fmt.Errorf("failed to load package: %w", err)
 	}
 
 	if len(pkgs) == 0 {
-		logger.FromContext(ctx).Info("no packages found for file", slog.String("path", filePath))
-		return "", nil
+		logger.FromContext(ctx).Info("no packages found for files")
+		return nil, nil
 	}
 
+	pkgNames := make([]string, 0, len(pkgs))
 	for _, pkg := range pkgs {
 		for _, file := range pkg.GoFiles {
-			if file == filePath {
-				return pkg.PkgPath, nil
+			if slices.Contains(filePaths, file) {
+				pkgNames = append(pkgNames, pkg.PkgPath)
 			}
 		}
 	}
 
-	return "", nil
+	return pkgNames, nil
 }
