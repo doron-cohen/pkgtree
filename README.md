@@ -11,43 +11,25 @@ With `pkgtree` it is possible to identify which packages changed or affected acc
 
 Get changed packages from last commit to current commit (HEAD^ to HEAD):
 ```
-❯ go run main.go changed
-github.com/doron-cohen/pkgtree/core
-github.com/doron-cohen/pkgtree/packages
+❯ pkgtree changed
 ```
 
 Get changed packages from a certain commit to current commit including uncommited changes:
 ```
-❯ go run main.go changed --since-ref=75b634b30f4d6705433d916b2f55aa233dc9be55 --include-dirty
-github.com/doron-cohen/pkgtree/cmd
-github.com/doron-cohen/pkgtree/core
-github.com/doron-cohen/pkgtree/logger
-github.com/doron-cohen/pkgtree/packages
+❯ pkgtree changed --since-ref=75b634b30f4d6705433d916b2f55aa233dc9be55 --include-dirty
 ```
 
 Get affected (including changed) packages from last commit to current commit (HEAD^ to HEAD):
 ```
-❯ go run main.go affected
-github.com/doron-cohen/pkgtree
-github.com/doron-cohen/pkgtree/cmd
-github.com/doron-cohen/pkgtree/core
-github.com/doron-cohen/pkgtree/packages
+❯ pkgtree affected
 ```
 
 Get affected packages from certain reference excluding the changed packages themselves:
 ```
-❯ go run main.go affected --since-ref=origin/main~4 --include-changed=false
-github.com/doron-cohen/pkgtree
-github.com/doron-cohen/pkgtree/cmd
-github.com/doron-cohen/pkgtree/core
-github.com/doron-cohen/pkgtree/packages
+❯ pkgtree affected --since-ref=origin/main~4 --include-changed=false
 ```
 
 Pass a different git dir:
 ```
-❯ go run main.go affected --git-dir=~/dev/pkgtree
-github.com/doron-cohen/pkgtree
-github.com/doron-cohen/pkgtree/cmd
-github.com/doron-cohen/pkgtree/core
-github.com/doron-cohen/pkgtree/packages
+❯ pkgtree affected --git-dir=~/dev/pkgtree
 ```
