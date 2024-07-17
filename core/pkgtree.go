@@ -2,9 +2,9 @@ package core
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/doron-cohen/pkgtree/packages"
-	"golang.org/x/exp/slices"
 )
 
 func GetChangedPackages(ctx context.Context, ref string, includeDirty bool, repoRoot string) ([]string, error) {
@@ -13,26 +13,57 @@ func GetChangedPackages(ctx context.Context, ref string, includeDirty bool, repo
 		return nil, err
 	}
 
-	pkgs := make([]string, 0, len(files))
+	pkgNames := make([]string, 0, len(files))
 	for _, file := range files {
 		if file == "" {
 			continue
 		}
 
-		pkg, err := packages.GetFilePackagePath(ctx, file)
+		// TODO: pass multiple files instead of one by one
+		pkgName, err := pkgs.GetFilePackagePath(ctx, file)
 		if err != nil {
 			return nil, err
 		}
 
-		if pkg != "" {
-			pkgs = append(pkgs, pkg)
+		if pkgName != "" {
+			pkgNames = append(pkgNames, pkgName)
 		}
 	}
 
-	return uniqueAndSort(pkgs), nil
+	return unique(pkgNames), nil
 }
 
-func uniqueAndSort(pkgs []string) []string {
+func GetAffectedPackages(
+	ctx context.Context, ref string, includeDirty bool, repoRoot string, includeChanged bool,
+) ([]string, error) {
+	changed, err := GetChangedPackages(ctx, ref, includeDirty, repoRoot)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get changed packages: %w", err)
+	}
+
+	depGraph, err := pkgs.BuildDependencyGraph(ctx, repoRoot)
+	if err != nil {
+		return nil, fmt.Errorf("failed to build dependency graph: %w", err)
+	}
+
+	affected := make([]string, 0, len(changed))
+	if includeChanged {
+		affected = append(affected, changed...)
+	}
+
+	for _, pkgName := range changed {
+		paths, err := depGraph.GetImporters(pkgName)
+		if err != nil {
+			return nil, err
+		}
+
+		affected = append(affected, unique(paths)...)
+	}
+
+	return unique(affected), nil
+}
+
+func unique(pkgs []string) []string {
 	seen := make(map[string]struct{})
 	uniquePkgs := make([]string, 0, len(pkgs))
 	for _, pkg := range pkgs {
@@ -44,6 +75,5 @@ func uniqueAndSort(pkgs []string) []string {
 		uniquePkgs = append(uniquePkgs, pkg)
 	}
 
-	slices.Sort(uniquePkgs)
 	return uniquePkgs
 }

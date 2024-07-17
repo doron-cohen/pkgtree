@@ -9,6 +9,9 @@ require (
 )
 
 require (
+	github.com/emirpasic/gods v1.18.1 // indirect
+	github.com/google/uuid v1.3.0 // indirect
+	github.com/heimdalr/dag v1.4.0 // indirect
 	golang.org/x/mod v0.19.0 // indirect
 	golang.org/x/sync v0.7.0 // indirect
 )
