@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"slices"
 
-	"github.com/doron-cohen/pkgtree/core"
-	"github.com/doron-cohen/pkgtree/logger"
+	"github.com/doron-cohen/pkgtree/internal/core"
+	"github.com/doron-cohen/pkgtree/internal/logger"
 )
 
 type ChangedCmd struct {

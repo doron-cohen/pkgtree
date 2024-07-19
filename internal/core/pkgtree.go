@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/doron-cohen/pkgtree/packages"
+	"github.com/doron-cohen/pkgtree/internal/pkgs"
 )
 
 func GetChangedPackages(ctx context.Context, ref string, includeDirty bool, repoRoot string) ([]string, error) {

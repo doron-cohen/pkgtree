@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"slices"
 
-	"github.com/doron-cohen/pkgtree/logger"
+	"github.com/doron-cohen/pkgtree/internal/logger"
 	"golang.org/x/tools/go/packages"
 )
 
