@@ -29,7 +29,7 @@ func GetAffectedPackages(
 		return nil, fmt.Errorf("failed to get changed packages: %w", err)
 	}
 
-	depGraph, err := pkgs.BuildDependencyGraph(ctx, repoRoot)
+	depGraph, err := pkgs.BuildDependencyGraph(ctx, repoRoot, pkgs.EdgeDirectionFromDependency)
 	if err != nil {
 		return nil, fmt.Errorf("failed to build dependency graph: %w", err)
 	}
@@ -49,6 +49,10 @@ func GetAffectedPackages(
 	}
 
 	return unique(affected), nil
+}
+
+func GetPackageTree(ctx context.Context, repoRoot string) (*pkgs.DependencyGraph, error) {
+	return pkgs.BuildDependencyGraph(ctx, repoRoot, pkgs.EdgeDirectionToDependency)
 }
 
 func unique(pkgs []string) []string {

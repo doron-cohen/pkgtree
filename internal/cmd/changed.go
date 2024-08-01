@@ -11,7 +11,8 @@ import (
 )
 
 type ChangedCmd struct {
-	Args
+	CommonArgs
+	ChangeArgs
 }
 
 func (c *ChangedCmd) Run() error {

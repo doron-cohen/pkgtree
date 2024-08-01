@@ -13,7 +13,14 @@ type DependencyGraph struct {
 	d *dag.DAG
 }
 
-func BuildDependencyGraph(ctx context.Context, moduleDir string) (*DependencyGraph, error) {
+type EdgeDirection string
+
+const (
+	EdgeDirectionToDependency   EdgeDirection = "to_dependency"
+	EdgeDirectionFromDependency EdgeDirection = "from_dependency"
+)
+
+func BuildDependencyGraph(ctx context.Context, moduleDir string, direction EdgeDirection) (*DependencyGraph, error) {
 	cfg := &packages.Config{
 		Context: ctx,
 		Mode:    packages.NeedName | packages.NeedImports | packages.NeedDeps | packages.NeedModule,
@@ -42,11 +49,17 @@ func BuildDependencyGraph(ctx context.Context, moduleDir string) (*DependencyGra
 	for _, pkg := range pkgs {
 		for _, dep := range pkg.Imports {
 			if strings.HasPrefix(dep.PkgPath, modulePath) {
-				// We are adding an edge from the dependant to the source to quickly
-				// identify all packages which are dependent on certain packages.
-				err = d.AddEdge(dep.PkgPath, pkg.PkgPath)
-				if err != nil {
-					return nil, fmt.Errorf("failed to add edge: %w", err)
+				switch direction {
+				case EdgeDirectionFromDependency:
+					err = d.AddEdge(dep.PkgPath, pkg.PkgPath)
+					if err != nil {
+						return nil, fmt.Errorf("failed to add edge: %w", err)
+					}
+				case EdgeDirectionToDependency:
+					err = d.AddEdge(pkg.PkgPath, dep.PkgPath)
+					if err != nil {
+						return nil, fmt.Errorf("failed to add edge: %w", err)
+					}
 				}
 			}
 		}
@@ -73,3 +86,5 @@ func (d *DependencyGraph) GetImporters(pkgName string) ([]string, error) {
 
 	return paths, nil
 }
+
+func (d *DependencyGraph) String() string { return d.d.String() }

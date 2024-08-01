@@ -11,7 +11,8 @@ import (
 )
 
 type AffectedCmd struct {
-	Args
+	CommonArgs
+	ChangeArgs
 
 	IncludeChanged bool `default:"true" help:"include changed packages"`
 }
